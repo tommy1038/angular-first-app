@@ -8,7 +8,7 @@ import {HousingService} from '../housing.service';
   imports: [CommonModule, HousingLocation],
   template: `
     <section>
-      <form>
+      <form (submit)="filterResults(filter.value); $event.preventDefault()">
         <input type="text" placeholder="Filter by city" #filter />
         <button class="primary" type="button" (click)="filterResults(filter.value)">Search</button>
       </form>
@@ -27,8 +27,12 @@ export class Home {
   housingService: HousingService = inject(HousingService);
   filteredLocationList: HousingLocationInfo[] = [];
   constructor() {
-    this.housingLocationList = this.housingService.getAllHousingLocations();
-    this.filteredLocationList = this.housingLocationList;
+    this.housingService
+      .getAllHousingLocations()
+      .then((housingLocationList: HousingLocationInfo[]) => {
+        this.housingLocationList = housingLocationList;
+        this.filteredLocationList = housingLocationList;
+      });
   }
   filterResults(text: string) {
     if (!text) {
